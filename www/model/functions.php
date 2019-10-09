@@ -1,7 +1,7 @@
 <?php
 
-function h($str){
-  return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+function h($word){
+  return htmlspecialchars($word, ENT_QUOTES, 'UTF-8');
 }
 
 function dd($var){
