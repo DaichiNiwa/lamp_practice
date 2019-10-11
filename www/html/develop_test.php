@@ -1,11 +1,19 @@
 <?php
-function h($word){
-    return htmlspecialchars($word, ENT_QUOTES, 'UTF-8');
-  }
+$dsn = 'mysql:dbname=sample;host=localhost;charset=utf8';
+$user = 'root';
+$password = '';
 
-$tanaka = "<h1>hello</h1>";
-    echo $tanaka;
+try {
+    $dbh = new PDO($dsn, $user, $password);
+    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $sql = "INSERT INTO user(name, age) VALUES(:name, :age)";
+    $stmt = $dbh->prepare($sql);
+    $stmt->bindValue(':name', $name, PDO::PARAM_STR);
+    $stmt->bindValue(':age', $age, PDO::PARAM_STR);
+    $stmt->execute();
+    echo '接続に成功しました。';
 
-$yamada = "<h1>happy</h1>";
-
-echo h($yamada);
+} catch(PDOException $e) {
+    print ($e->getMessage);
+    die();
+}
