@@ -101,6 +101,7 @@ function delete_cart($db, $cart_id){
   return execute_query($db, $sql);
 }
 
+// この関数内に購入履歴への登録もふくめる
 function purchase_carts($db, $carts){
   if(validate_cart_purchase($carts) === false){
     return false;
