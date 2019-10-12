@@ -87,6 +87,7 @@
                   <input type="hidden" name="changes_to" value="open">
                 <?php } ?>
                 <input type="hidden" name="item_id" value="<?php print($item['item_id']); ?>">
+                <input type="hidden" name="csrf_token" value="<?php print h($token); ?>">
               </form>
 
               <form method="post" action="admin_delete_item.php">
