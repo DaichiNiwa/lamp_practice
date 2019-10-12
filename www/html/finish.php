@@ -12,6 +12,7 @@ if(is_logined() === false){
 }
 
 if(!is_valid_csrf_token($_POST['csrf_token'])){
+  $token = get_csrf_token();
   die('不正なアクセスが行われました。');
 }
 
