@@ -8,6 +8,8 @@ if(is_logined() === true){
   redirect_to(HOME_URL);
 }
 
+$token = get_csrf_token();
+
 include_once '../view/signup_view.php';
 
 
