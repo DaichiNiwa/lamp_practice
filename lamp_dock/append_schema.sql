@@ -6,7 +6,7 @@ CREATE TABLE histories (
     PRIMARY KEY (`history_id`));
 
 -- 購入された商品の詳細のテーブル
-CREATE TABLE purchased_items ( 
+CREATE TABLE purchased_carts ( 
     `purchased_id` INT(11) NOT NULL AUTO_INCREMENT ,
     `history_id` INT(11) NOT NULL,
     `item_id` INT(11) NOT NULL , 
