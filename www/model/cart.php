@@ -51,7 +51,6 @@ function get_user_cart($db, $user_id, $item_id){
   ";
 
   return fetch_query($db, $sql);
-
 }
 
 function add_cart($db, $item_id, $user_id) {
@@ -86,6 +85,7 @@ function update_cart_amount($db, $cart_id, $amount){
       cart_id = {$cart_id}
     LIMIT 1
   ";
+  
   return execute_query($db, $sql);
 }
 
@@ -109,14 +109,18 @@ function purchase_carts($db, $carts){
   $db->beginTransaction();
   try{
     //購入履歴テーブルへのデータ保存
-    insert_histories($db, $carts[0]['user_id']);
+    if(insert_histories($db, $carts[0]['user_id']) === false){
+      set_error('購入に失敗しました。');
+    }
 
     // 上の購入履歴のhistory_idを取得
     $history_id = $db->lastInsertId();
 
     foreach($carts as $cart){
       // 購入詳細テーブルへのデータ保存
-      insert_purchased_carts($db, $history_id, $cart);
+      if(insert_purchased_carts($db, $history_id, $cart) === false){
+        set_error('購入に失敗しました。');
+      }
 
       // 在庫数を減らす
       if(update_item_stock(
@@ -129,8 +133,13 @@ function purchase_carts($db, $carts){
     }
     
     // カート内の商品をすべて削除
-    delete_user_carts($db, $carts[0]['user_id']);
+    if(delete_user_carts($db, $carts[0]['user_id']) === false){
+      set_error('購入に失敗しました。');
+    }
 
+    if(has_error() === true){
+      return false;
+    }
     $db->commit();
     return true;
   }catch(PDOException $e){
@@ -151,7 +160,7 @@ function insert_histories($db, $user_id){
 
   $params = array(':user_id' => $user_id);
   
-  execute_query($db, $sql, $params);
+  return execute_query($db, $sql, $params);
 }
 
 // 購入詳細テーブルへのデータ保存
@@ -179,7 +188,7 @@ function insert_purchased_carts($db, $history_id, $cart){
     ':purchased_price' => $cart['price']
   );
 
-  execute_query($db, $sql, $params);
+  return execute_query($db, $sql, $params);
 }
 
 function delete_user_carts($db, $user_id){
@@ -190,7 +199,7 @@ function delete_user_carts($db, $user_id){
       user_id = {$user_id}
   ";
 
-  execute_query($db, $sql);
+  return execute_query($db, $sql);
 }
 
 
