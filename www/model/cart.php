@@ -109,47 +109,14 @@ function purchase_carts($db, $carts){
   $db->beginTransaction();
   try{
     //購入履歴テーブルへのデータ保存
-    $sql = "
-      INSERT INTO
-        histories(
-          user_id
-        )
-      VALUES(:user_id)
-    ";
+    insert_histories($db, $carts[0]['user_id']);
 
-    $params = array(':user_id' => $carts[0]['user_id']);
-    
-    execute_query($db, $sql, $params);
-
-    // 購入履歴のhistory_idを取得
+    // 上の購入履歴のhistory_idを取得
     $history_id = $db->lastInsertId();
 
     foreach($carts as $cart){
       // 購入詳細テーブルへのデータ保存
-      $sql = "
-        INSERT INTO
-          purchased_carts(
-            history_id,
-            item_id,
-            amount,
-            purchased_price
-          )
-        VALUES(
-          :history_id, 
-          :item_id, 
-          :amount,
-          :purchased_price
-        )
-      ";
-
-      $params = array(
-        ':history_id' => $history_id,
-        ':item_id' => $cart['item_id'],
-        ':amount' => $cart['amount'],
-        ':purchased_price' => $cart['price']
-      );
-
-      execute_query($db, $sql, $params);
+      insert_purchased_carts($db, $history_id, $cart);
 
       // 在庫数を減らす
       if(update_item_stock(
@@ -163,6 +130,7 @@ function purchase_carts($db, $carts){
     
     // カート内の商品をすべて削除
     delete_user_carts($db, $carts[0]['user_id']);
+
     $db->commit();
     return true;
   }catch(PDOException $e){
@@ -171,8 +139,47 @@ function purchase_carts($db, $carts){
   }
 }
 
-function insert_histories($db, $carts){
+//購入履歴テーブルへのデータ保存
+function insert_histories($db, $user_id){
+  $sql = "
+    INSERT INTO
+      histories(
+        user_id
+      )
+    VALUES(:user_id)
+  ";
+
+  $params = array(':user_id' => $user_id);
   
+  execute_query($db, $sql, $params);
+}
+
+// 購入詳細テーブルへのデータ保存
+function insert_purchased_carts($db, $history_id, $cart){
+  $sql = "
+    INSERT INTO
+      purchased_carts(
+        history_id,
+        item_id,
+        amount,
+        purchased_price
+      )
+    VALUES(
+      :history_id, 
+      :item_id, 
+      :amount,
+      :purchased_price
+    )
+  ";
+
+  $params = array(
+    ':history_id' => $history_id,
+    ':item_id' => $cart['item_id'],
+    ':amount' => $cart['amount'],
+    ':purchased_price' => $cart['price']
+  );
+
+  execute_query($db, $sql, $params);
 }
 
 function delete_user_carts($db, $user_id){
