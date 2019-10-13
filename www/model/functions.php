@@ -141,7 +141,7 @@ function is_valid_upload_image($image){
 // トークンの生成
 function get_csrf_token(){
   // get_random_string()はユーザー定義関数。
-  $token = get_random_string(48);
+  $token = get_random_string(20);
   // set_session()はユーザー定義関数。
   set_session('csrf_token', $token);
   return $token;
