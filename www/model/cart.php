@@ -117,13 +117,10 @@ function purchase_carts($db, $carts){
     $history_id = $db->lastInsertId();
 
     foreach($carts as $cart){
-      // 購入詳細テーブルへのデータ保存
-      if(insert_purchased_carts($db, $history_id, $cart) === false){
-        set_error('購入に失敗しました。');
-      }
-
+      // 購入詳細テーブルへのデータ保存と
       // 在庫数を減らす
-      if(update_item_stock(
+      if(insert_purchased_carts($db, $history_id, $cart) === false ||
+        update_item_stock(
           $db, 
           $cart['item_id'], 
           $cart['stock'] - $cart['amount']
