@@ -3,6 +3,7 @@ CREATE TABLE histories (
     `history_id` INT(11) NOT NULL AUTO_INCREMENT , 
     `user_id` INT(11) NOT NULL , 
     `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+    `updated` DATETIME on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`history_id`));
 
 -- 購入された商品の詳細のテーブル
@@ -12,4 +13,6 @@ CREATE TABLE purchased_carts (
     `item_id` INT(11) NOT NULL , 
     `amount` INT(11) NOT NULL , 
     `purchased_price` INT(11) NOT NULL ,
+    `created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+    `updated` DATETIME on update CURRENT_TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`purchased_id`));
