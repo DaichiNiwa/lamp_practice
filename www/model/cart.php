@@ -265,7 +265,10 @@ function get_histories($db, $user_id){
   WHERE
     histories.user_id = :user_id
   GROUP BY
-    histories.history_id;
+    histories.history_id
+  ORDER BY
+    created
+  DESC;
   ";
 
   $params = array(
