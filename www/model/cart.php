@@ -231,6 +231,14 @@ function sum_carts($carts){
   return $total_price;
 }
 
+function sum_purchased_carts($carts){
+  $total_price = 0;
+  foreach($carts as $cart){
+    $total_price += $cart['purchased_price'] * $cart['amount'];
+  }
+  return $total_price;
+}
+
 function validate_cart_purchase($carts){
   if(count($carts) === 0){
     set_error('カートに商品が入っていません。');
@@ -268,11 +276,37 @@ function get_histories($db, $user_id){
     histories.history_id
   ORDER BY
     created
-  DESC;
+  DESC
   ";
 
   $params = array(
     ':user_id' => $user_id
+  );
+
+  return fetch_all_query($db, $sql, $params);
+}
+
+function get_history_detail($db, $history_id){
+  $sql = "
+    SELECT
+      purchased_carts.purchased_id,
+      purchased_carts.history_id,
+      purchased_carts.amount,
+      purchased_carts.purchased_price,
+      purchased_carts.created,
+      items.name
+    FROM
+      purchased_carts
+    JOIN 
+      items 
+    ON 
+      purchased_carts.item_id = items.item_id
+    WHERE
+      purchased_carts.history_id = :history_id
+  ";
+
+  $params = array(
+    ':history_id' => $history_id
   );
 
   return fetch_all_query($db, $sql, $params);
