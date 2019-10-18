@@ -1,5 +1,9 @@
 <?php
 
+function h($word){
+  return htmlspecialchars($word, ENT_QUOTES, 'UTF-8');
+}
+
 function dd($var){
   var_dump($var);
   exit();
