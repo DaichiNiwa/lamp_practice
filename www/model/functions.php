@@ -3,10 +3,6 @@ function h($word){
   return htmlspecialchars($word, ENT_QUOTES, 'UTF-8');
 }
 
-function h($word){
-  return htmlspecialchars($word, ENT_QUOTES, 'UTF-8');
-}
-
 function dd($var){
   var_dump($var);
   exit();
@@ -109,8 +105,6 @@ function delete_image($filename){
   
 }
 
-
-
 function is_valid_length($string, $minimum_length, $maximum_length = PHP_INT_MAX){
   $length = mb_strlen($string);
   return ($minimum_length <= $length) && ($length <= $maximum_length);
@@ -145,7 +139,7 @@ function is_valid_upload_image($image){
 // トークンの生成
 function get_csrf_token(){
   // get_random_string()はユーザー定義関数。
-  $token = get_random_string(20);
+  $token = get_random_string(TOKEN_LENGTH);
   // set_session()はユーザー定義関数。
   set_session('csrf_token', $token);
   return $token;
