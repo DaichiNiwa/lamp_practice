@@ -3,7 +3,7 @@
 <head>
   <?php include VIEW_PATH . 'templates/head.php'; ?>
   <title>購入履歴</title>
-  <link rel="stylesheet" href="<?php print h(STYLESHEET_PATH . 'cart.css'); ?>">
+  <!-- <link rel="stylesheet" href="<?php print h(STYLESHEET_PATH . 'cart.css'); ?>"> -->
 </head>
 <body>
   <?php include VIEW_PATH . 'templates/header_logined.php'; ?>
