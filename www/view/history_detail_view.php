@@ -11,12 +11,11 @@
   <div class="container">
 
     <?php include VIEW_PATH . 'templates/messages.php'; ?>
-
-    <p>
-      注文番号<?php print h($history_details[0]['history_id']); ?>
-      購入日時<?php print h($history_details[0]['created']); ?>
-      合計金額<?php print h(number_format($total_price)); ?>円
-    </p>    
+		<div class="row">
+			<p>注文番号<?php print h($history_details[0]['history_id']); ?></p>
+			<p>購入日時<?php print h($history_details[0]['created']); ?></p>
+			<p>合計金額<?php print h(number_format($total_price)); ?>円</p>
+		</div>
     <table class="table table-bordered">
 			<thead class="thead-light">
 				<tr>

@@ -132,43 +132,53 @@ function purchase_carts($db, $carts){
     return false;
   }
   $db->beginTransaction();
-  try{
-    //購入履歴テーブルへのデータ保存
-    if(insert_histories($db, $carts[0]['user_id']) === false){
-      set_error('購入に失敗しました。');
-    }
-    // 上の購入履歴のhistory_idを取得
-    $history_id = $db->lastInsertId();
-    foreach($carts as $cart){
-      // 購入詳細テーブルへのデータ保存と
-      // 在庫数を減らす
-      if(insert_purchased_carts($db, $history_id, $cart) === false ||
-        update_item_stock(
-          $db, 
-          $cart['item_id'], 
-          $cart['stock'] - $cart['amount']
-        ) === false){
-        set_error($cart['name'] . 'の購入に失敗しました。');
-      }
-    }
-    
-    // カート内の商品をすべて削除
-    if(delete_user_carts($db, $carts[0]['user_id']) === false){
-      set_error('購入に失敗しました。');
-    }
-    if(has_error() === true){
-      return false;
-    }
-    $db->commit();
-    return true;
-  }catch(PDOException $e){
+  //購入履歴テーブルへのデータ保存
+  if(insert_history($db, $carts[0]['user_id']) === false){
+    set_error('購入に失敗しました。');
     $db->rollback();
     return false;
   }
+
+  // 上の購入履歴のhistory_idを取得
+  $history_id = $db->lastInsertId();
+  foreach($carts as $cart){
+    // 購入詳細テーブルへのデータ保存
+    if(insert_purchased_cart(
+        $db,
+        $history_id, 
+        $cart['item_id'], 
+        $cart['amount'], 
+        $cart['price']
+      ) === false){
+      set_error($cart['name'] . 'の購入に失敗しました。');
+      $db->rollback();
+      return false;
+    }
+    // 在庫数を減らす
+    if(update_item_stock(
+        $db, 
+        $cart['item_id'], 
+        $cart['stock'] - $cart['amount']
+      ) === false){
+      set_error($cart['name'] . 'の購入に失敗しました。');
+      $db->rollback();
+      return false;
+    }
+  }
+  
+  // カート内の商品をすべて削除
+  if(delete_user_carts($db, $carts[0]['user_id']) === false){
+    set_error('購入に失敗しました。');
+    $db->rollback();
+    return false;
+  }
+
+  $db->commit();
+  return true;
 }
 
 //購入履歴テーブルへのデータ保存
-function insert_histories($db, $user_id){
+function insert_history($db, $user_id){
   $sql = "
     INSERT INTO
       histories(
@@ -182,7 +192,7 @@ function insert_histories($db, $user_id){
 }
 
 // 購入詳細テーブルへのデータ保存
-function insert_purchased_carts($db, $history_id, $cart){
+function insert_purchased_cart($db, $history_id, $item_id, $amount, $purchased_price){
   $sql = "
     INSERT INTO
       purchased_carts(
@@ -200,9 +210,9 @@ function insert_purchased_carts($db, $history_id, $cart){
   ";
   $params = array(
     ':history_id' => $history_id,
-    ':item_id' => $cart['item_id'],
-    ':amount' => $cart['amount'],
-    ':purchased_price' => $cart['price']
+    ':item_id' => $item_id,
+    ':amount' => $amount,
+    ':purchased_price' => $purchased_price
   );
   return execute_query($db, $sql, $params);
 }
@@ -258,6 +268,7 @@ function validate_cart_purchase($carts){
   return true;
 }
 
+// 新しいファイル2つ作ってそちらに分離
 function get_histories($db, $user_id){
   $sql = "
   SELECT
@@ -286,7 +297,7 @@ function get_histories($db, $user_id){
   return fetch_all_query($db, $sql, $params);
 }
 
-function get_history_detail($db, $history_id){
+function get_history_details($db, $history_id){
   $sql = "
     SELECT
       purchased_carts.purchased_id,
@@ -311,3 +322,5 @@ function get_history_detail($db, $history_id){
 
   return fetch_all_query($db, $sql, $params);
 }
+
+// get_historyでひとつ取得する
