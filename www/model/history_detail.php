@@ -1,5 +1,4 @@
 <?php
-// get_historyでひとつ取得する
 function get_history($db, $history_id){
 	$sql = "
 	SELECT

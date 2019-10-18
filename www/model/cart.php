@@ -232,19 +232,10 @@ function delete_user_carts($db, $user_id){
   execute_query($db, $sql, $params);
 }
 
-
 function sum_carts($carts){
   $total_price = 0;
   foreach($carts as $cart){
     $total_price += $cart['price'] * $cart['amount'];
-  }
-  return $total_price;
-}
-
-function sum_purchased_carts($carts){
-  $total_price = 0;
-  foreach($carts as $cart){
-    $total_price += $cart['purchased_price'] * $cart['amount'];
   }
   return $total_price;
 }
