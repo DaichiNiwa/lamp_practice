@@ -22,14 +22,14 @@
 			</tr>
 		</thead>
 		<tbody>     
-				<?php foreach($history_details as $history_detail){ ?>
-					<tr>
-					<td><?php print h($history_detail['name']); ?></td>
-					<td><?php print h($history_detail['purchased_price']); ?></td>
-					<td><?php print h($history_detail['amount']); ?></td>
-					<td><?php print h(number_format($history_detail['purchased_price'] * $history_detail['amount'])); ?>円</td>
-					</tr>
-				<?php } ?>
+			<?php foreach($history_details as $history_detail){ ?>
+				<tr>
+				<td><?php print h($history_detail['name']); ?></td>
+				<td><?php print h($history_detail['purchased_price']); ?></td>
+				<td><?php print h($history_detail['amount']); ?></td>
+				<td><?php print h(number_format($history_detail['purchased_price'] * $history_detail['amount'])); ?>円</td>
+				</tr>
+			<?php } ?>
 		</tbody>
 		</table>
 		<p class="text-right">合計金額<?php print h(number_format($history['sum'])); ?>円</p>
