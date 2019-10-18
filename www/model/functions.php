@@ -1,4 +1,7 @@
 <?php
+function h($word){
+  return htmlspecialchars($word, ENT_QUOTES, 'UTF-8');
+}
 
 function h($word){
   return htmlspecialchars($word, ENT_QUOTES, 'UTF-8');
@@ -139,3 +142,20 @@ function is_valid_upload_image($image){
   return true;
 }
 
+// トークンの生成
+function get_csrf_token(){
+  // get_random_string()はユーザー定義関数。
+  $token = get_random_string(20);
+  // set_session()はユーザー定義関数。
+  set_session('csrf_token', $token);
+  return $token;
+}
+
+//  トークンのチェック
+function is_valid_csrf_token($token){
+  if($token === ''){
+    return false;
+  }
+  // get_session()はユーザー定義関数。
+  return $token === get_session('csrf_token');
+}
