@@ -26,7 +26,7 @@ function get_item($db, $item_id){
   return fetch_query($db, $sql, $params);
 }
 
-function get_items($db, $is_open = false){
+function get_items($db, $is_open = false, $list_start_number = null){
   $sql = '
     SELECT
       item_id, 
@@ -38,21 +38,41 @@ function get_items($db, $is_open = false){
     FROM
       items
   ';
+
   if($is_open === true){
     $sql .= '
       WHERE status = 1
     ';
   }
 
-  return fetch_all_query($db, $sql);
+  if(isset($list_start_number)){
+    $sql .= '
+      LIMIT :list_start_number, 8
+    ';
+    $params = array(
+      ':list_start_number' => $list_start_number
+    );
+  }
+  return fetch_all_query($db, $sql, $params);
 }
 
 function get_all_items($db){
   return get_items($db);
 }
 
-function get_open_items($db){
-  return get_items($db, true);
+function get_open_items($db, $list_start_number){
+  return get_items($db, true, $list_start_number);
+}
+
+function get_all_items_amount($db){
+  $sql = '
+    SELECT
+      COUNT(item_id) as count
+    FROM
+      items
+  ';
+  $all_items_amount = fetch_query($db, $sql);
+  return $all_items_amount['count'];
 }
 
 function regist_item($db, $name, $price, $stock, $status, $image){
