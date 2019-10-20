@@ -1,5 +1,5 @@
 <?php
-function get_history($db, $history_id){
+function get_history($db, $history_id, $user_id){
 	$sql = "
 	SELECT
 		histories.history_id,
@@ -13,14 +13,25 @@ function get_history($db, $history_id){
 	ON
 		histories.history_id = purchased_carts.history_id
 	WHERE
-		histories.history_id = :history_id
-	GROUP BY
-		histories.history_id
-	";
+    histories.history_id = :history_id
+  ";
 
-	$params = array(
-			':history_id' => $history_id
-	);
+  $params = array(
+    ':history_id' => $history_id,
+  );
+
+  if($user_id !== ADMIN_USER_ID){
+    $sql .= "
+    AND
+      histories.user_id = :user_id
+    ";
+    $params[':user_id'] = $user_id;
+  }
+  
+  $sql .= "
+    GROUP BY
+      histories.history_id
+	";
 
 	return fetch_query($db, $sql, $params);
 }

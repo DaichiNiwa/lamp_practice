@@ -16,20 +16,22 @@ if(is_logined() === false){
 $history_id = get_get('history_id');
 // 正規表現で、数字でない場合と0の場合は履歴一覧へリダイレクト
 if(is_positive_integer($history_id) === false ||
-  $history_id == 0){
+  $history_id === '0'){
+  set_error('指定された履歴は存在しません。');
   redirect_to(HISTORY_URL);
 }
 
 $db = get_db_connect();
 $user = get_login_user($db);
 
-$history = get_history($db, $history_id);
-$history_details = get_history_details($db, $history_id);
 
-// 購入したユーザーではなく、管理者でもない場合リダイレクト
-if($user['user_id'] !== $history['user_id'] &&
-  !is_admin($user)){
+$history = get_history($db, $history_id, $user['user_id']);
+// 存在しないhistory_idでデータが取得された場合リダイレクト
+if($history === false){
+  set_error('指定された履歴は存在しません。');
   redirect_to(HISTORY_URL);
 }
+
+$history_details = get_history_details($db, $history_id);
 
 include_once '../view/history_detail_view.php';
