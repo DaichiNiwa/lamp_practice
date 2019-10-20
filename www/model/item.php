@@ -26,7 +26,7 @@ function get_item($db, $item_id){
   return fetch_query($db, $sql, $params);
 }
 
-function get_items($db, $is_open = false, $list_start_number = null){
+function get_items($db, $is_open = false, $list_start_number = 0){
   $sql = '
     SELECT
       item_id, 
@@ -45,14 +45,14 @@ function get_items($db, $is_open = false, $list_start_number = null){
     ';
   }
 
-  if(isset($list_start_number)){
-    $sql .= '
-      LIMIT :list_start_number, 8
-    ';
-    $params = array(
-      ':list_start_number' => $list_start_number
-    );
-  }
+  $sql .= '
+    LIMIT :list_start_number,
+  ' . DISPLAY_ITEMS_NUMBER;
+
+  $params = array(
+    ':list_start_number' => $list_start_number
+  );
+
   return fetch_all_query($db, $sql, $params);
 }
 

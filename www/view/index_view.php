@@ -21,7 +21,7 @@
           <input type="hidden" name="current_page" value="<?php print h($current_page - 1) ?>">
         </form>
       <?php } ?>
-      <?php for ($i=1; $i <= $total_pages_number; $i++){ ?>
+      <?php for ($i = 1; $i <= $total_pages_number; $i++){ ?>
         <form class="mr-2" method="get">
           <?php if($current_page === $i){ ?>
             <input type="submit" value="<?php print h($i) ?>" class="btn btn-info">

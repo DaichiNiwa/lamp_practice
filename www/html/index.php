@@ -20,12 +20,8 @@ $all_items_amount = get_all_items_amount($db);
 // 総ページ数を算出
 $total_pages_number = ceil($all_items_amount / DISPLAY_ITEMS_NUMBER);
 
-// ゲットで現在のページ番号を取得。ないときはトップページとして１
-if (isset($_GET['current_page'])){
-  $current_page = (int)get_get('current_page');
-} else{
-  $current_page = 1;
-}
+// ゲットで現在のページ番号を取得
+$current_page = (int)get_get('current_page', 1);
 
 // 商品一覧の一番最初の商品の番号を算出
 $list_start_number = DISPLAY_ITEMS_NUMBER * ($current_page - 1);
@@ -38,7 +34,7 @@ $items_count_text =
   . '件中 ' 
   . ($list_start_number + 1) 
   . '-' 
-  . ($list_start_number + 8) 
+  . ($list_start_number + DISPLAY_ITEMS_NUMBER) 
   . '件の商品'
 ;
 
