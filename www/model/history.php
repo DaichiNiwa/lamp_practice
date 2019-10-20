@@ -11,18 +11,24 @@ function get_histories($db, $user_id){
     purchased_carts
   ON
     histories.history_id = purchased_carts.history_id
-  WHERE
-    histories.user_id = :user_id
+  ";
+
+  // 管理者以外のユーザーは自分の購入した商品のみ閲覧できる。
+  if($user_id !== ADMIN_USER_ID){
+    $sql .= "
+    WHERE
+      histories.user_id = :user_id
+    ";
+    $params[':user_id'] = $user_id;
+  }
+
+  $sql .= "
   GROUP BY
     histories.history_id
   ORDER BY
     created
   DESC
-  ";
-
-  $params = array(
-    ':user_id' => $user_id
-  );
+	";
 
   return fetch_all_query($db, $sql, $params);
 }

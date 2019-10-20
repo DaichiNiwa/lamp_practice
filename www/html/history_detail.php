@@ -24,7 +24,6 @@ if(is_positive_integer($history_id) === false ||
 $db = get_db_connect();
 $user = get_login_user($db);
 
-
 $history = get_history($db, $history_id, $user['user_id']);
 // 存在しないhistory_idでデータが取得された場合リダイレクト
 if($history === false){
