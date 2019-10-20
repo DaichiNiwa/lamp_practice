@@ -39,20 +39,17 @@ function get_items($db, $is_open = false, $list_start_number = 0){
       items
   ';
 
+  // $is_openがfalseのときは管理画面での全商品表示、
+  // trueのときは商品一覧画面で８つずつ表示するのを想定
   if($is_open === true){
     $sql .= '
       WHERE status = 1
-    ';
+      LIMIT :list_start_number,
+    ' . DISPLAY_ITEMS_NUMBER;
+    $params = array(
+      ':list_start_number' => $list_start_number
+    );
   }
-
-  $sql .= '
-    LIMIT :list_start_number,
-  ' . DISPLAY_ITEMS_NUMBER;
-
-  $params = array(
-    ':list_start_number' => $list_start_number
-  );
-
   return fetch_all_query($db, $sql, $params);
 }
 
