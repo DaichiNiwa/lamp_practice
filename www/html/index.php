@@ -28,14 +28,7 @@ $list_start_number = DISPLAY_ITEMS_NUMBER * ($current_page - 1);
 // 表示する商品を８つ取得
 $items = get_open_items($db, $list_start_number);
 
-// 「xx件中 xx - xx件の商品」の表示のためのテキスト
-$items_count_text = 
-  $all_items_amount 
-  . '件中 ' 
-  . ($list_start_number + 1) 
-  . '-' 
-  . ($list_start_number + DISPLAY_ITEMS_NUMBER) 
-  . '件の商品'
-;
+// 「xx件中 xx - xx件の商品」の表示のためのテキストを生成
+$items_count_text = make_items_count_text($all_items_amount, $list_start_number);
 
 include_once '../view/index_view.php';

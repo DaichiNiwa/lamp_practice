@@ -67,6 +67,7 @@ function get_all_items_amount($db){
       COUNT(item_id) as count
     FROM
       items
+    WHERE status = 1
   ';
   $all_items_amount = fetch_query($db, $sql);
   return $all_items_amount['count'];
@@ -248,4 +249,23 @@ function is_valid_item_status($status){
     $is_valid = false;
   }
   return $is_valid;
+}
+
+// 「xx件中 xx - xx件の商品」の表示のためのテキストを生成
+function make_items_count_text($all_items_amount, $list_start_number){
+  // 商品が1つもない場合
+  if($all_items_amount === 0){
+    return '商品がありません';
+  // 最終ページで商品が１つしかない場合
+  } elseif($all_items_amount - $list_start_number === 1){
+    return "{$all_items_amount}件中 {$all_items_amount}件の商品";
+  // 最終ページの場合
+  } elseif($all_items_amount - $list_start_number < 8){
+    $list_end_number = $all_items_amount;
+  // 通常のページ
+  } else {
+    $list_end_number = $list_start_number + DISPLAY_ITEMS_NUMBER;
+  }
+  $list_start_number += 1;
+  return "{$all_items_amount}件中 {$list_start_number} - {$list_end_number}件の商品";
 }
