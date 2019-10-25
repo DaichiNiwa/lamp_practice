@@ -13,11 +13,11 @@ function redirect_to($url){
   exit;
 }
 
-function get_get($name){
+function get_get($name, $default = ''){
   if(isset($_GET[$name]) === true){
     return $_GET[$name];
   };
-  return '';
+  return $default;
 }
 
 function get_post($name){
@@ -83,7 +83,9 @@ function get_upload_filename($file){
   if(is_valid_upload_image($file) === false){
     return '';
   }
+  // ファイルのタイプを取得
   $mimetype = exif_imagetype($file['tmp_name']);
+  // ファイルのタイプに応じて、拡張子をつける
   $ext = PERMITTED_IMAGE_TYPES[$mimetype];
   return get_random_string() . '.' . $ext;
 }

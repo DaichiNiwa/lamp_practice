@@ -26,7 +26,7 @@ function get_item($db, $item_id){
   return fetch_query($db, $sql, $params);
 }
 
-function get_items($db, $is_open = false){
+function get_items($db, $is_open = false, $list_start_number = 0){
   $sql = '
     SELECT
       item_id, 
@@ -38,21 +38,40 @@ function get_items($db, $is_open = false){
     FROM
       items
   ';
+
+  // $is_openがfalseのときは管理画面での全商品表示、
+  // trueのときは商品一覧画面で８つずつ表示するのを想定
   if($is_open === true){
     $sql .= '
       WHERE status = 1
-    ';
+      LIMIT :list_start_number,
+    ' . DISPLAY_ITEMS_NUMBER;
+    $params = array(
+      ':list_start_number' => $list_start_number
+    );
   }
-
-  return fetch_all_query($db, $sql);
+  return fetch_all_query($db, $sql, $params);
 }
 
 function get_all_items($db){
   return get_items($db);
 }
 
-function get_open_items($db){
-  return get_items($db, true);
+function get_open_items($db, $current_page){
+  $list_start_number = DISPLAY_ITEMS_NUMBER * ($current_page - 1);
+  return get_items($db, true, $list_start_number);
+}
+
+function get_all_items_amount($db){
+  $sql = '
+    SELECT
+      COUNT(item_id) as count
+    FROM
+      items
+    WHERE status = 1
+  ';
+  $all_items_amount = fetch_query($db, $sql);
+  return $all_items_amount['count'];
 }
 
 function regist_item($db, $name, $price, $stock, $status, $image){
@@ -231,4 +250,28 @@ function is_valid_item_status($status){
     $is_valid = false;
   }
   return $is_valid;
+}
+
+// 「xx件中 xx - xx件の商品」の表示のためのテキストを生成
+function make_items_count_text($all_items_amount, $current_page){
+  $list_start_number = DISPLAY_ITEMS_NUMBER * ($current_page - 1) + 1;
+  $list_end_number = $current_page * DISPLAY_ITEMS_NUMBER;
+  // 商品が1つもない場合
+  if($all_items_amount === 0){
+    return '商品がありません';
+  }
+  // 最終ページで商品が１つしかない場合
+  if($all_items_amount === $list_start_number){
+    return "{$all_items_amount}件中 {$all_items_amount}件目の商品";
+  }
+  // 最終ページの場合
+  if($all_items_amount < $list_end_number){
+    return "{$all_items_amount}件中 {$list_start_number} - {$all_items_amount}件目の商品";
+  }
+  // 通常のページ  
+  return "{$all_items_amount}件中 {$list_start_number} - {$list_end_number}件目の商品";
+}
+
+function calculate_total_pages_number($all_items_amount){
+  return ceil($all_items_amount / DISPLAY_ITEMS_NUMBER);
 }

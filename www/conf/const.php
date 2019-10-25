@@ -27,7 +27,6 @@ define('HISTORY_DETAIL_URL', '/history_detail.php');
 define('REGEXP_ALPHANUMERIC', '/\A[0-9a-zA-Z]+\z/');
 define('REGEXP_POSITIVE_INTEGER', '/\A([1-9][0-9]*|0)\z/');
 
-
 define('USER_NAME_LENGTH_MIN', 6);
 define('USER_NAME_LENGTH_MAX', 100);
 define('USER_PASSWORD_LENGTH_MIN', 6);
@@ -45,6 +44,9 @@ define('ITEM_STATUS_CLOSE', 0);
 
 // 発行するトークンの長さを指定
 define('TOKEN_LENGTH', 20);
+
+// 商品一覧ページで表示する商品数を指定
+define('DISPLAY_ITEMS_NUMBER', 8);
 
 define('PERMITTED_ITEM_STATUSES', array(
   'open' => 1,
