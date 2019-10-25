@@ -18,17 +18,15 @@ $user = get_login_user($db);
 // 総商品数を取得
 $all_items_amount = get_all_items_amount($db);
 // 総ページ数を算出
-$total_pages_number = ceil($all_items_amount / DISPLAY_ITEMS_NUMBER);
+$total_pages_number = calculate_total_pages_number($all_items_amount);
 
 // ゲットで現在のページ番号を取得
 $current_page = (int)get_get('current_page', 1);
 
-// 商品一覧の一番最初の商品の番号を算出
-$list_start_number = DISPLAY_ITEMS_NUMBER * ($current_page - 1);
 // 表示する商品を８つ取得
-$items = get_open_items($db, $list_start_number);
+$items = get_open_items($db, $current_page);
 
 // 「xx件中 xx - xx件の商品」の表示のためのテキストを生成
-$items_count_text = make_items_count_text($all_items_amount, $list_start_number);
+$items_count_text = make_items_count_text($all_items_amount, $current_page);
 
 include_once '../view/index_view.php';

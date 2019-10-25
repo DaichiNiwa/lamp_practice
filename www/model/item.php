@@ -57,7 +57,8 @@ function get_all_items($db){
   return get_items($db);
 }
 
-function get_open_items($db, $list_start_number){
+function get_open_items($db, $current_page){
+  $list_start_number = DISPLAY_ITEMS_NUMBER * ($current_page - 1);
   return get_items($db, true, $list_start_number);
 }
 
@@ -252,20 +253,25 @@ function is_valid_item_status($status){
 }
 
 // 「xx件中 xx - xx件の商品」の表示のためのテキストを生成
-function make_items_count_text($all_items_amount, $list_start_number){
+function make_items_count_text($all_items_amount, $current_page){
+  $list_start_number = DISPLAY_ITEMS_NUMBER * ($current_page - 1) + 1;
+  $list_end_number = $current_page * DISPLAY_ITEMS_NUMBER;
   // 商品が1つもない場合
   if($all_items_amount === 0){
     return '商品がありません';
-  // 最終ページで商品が１つしかない場合
-  } elseif($all_items_amount - $list_start_number === 1){
-    return "{$all_items_amount}件中 {$all_items_amount}件の商品";
-  // 最終ページの場合
-  } elseif($all_items_amount - $list_start_number < 8){
-    $list_end_number = $all_items_amount;
-  // 通常のページ
-  } else {
-    $list_end_number = $list_start_number + DISPLAY_ITEMS_NUMBER;
   }
-  $list_start_number += 1;
-  return "{$all_items_amount}件中 {$list_start_number} - {$list_end_number}件の商品";
+  // 最終ページで商品が１つしかない場合
+  if($all_items_amount === $list_start_number){
+    return "{$all_items_amount}件中 {$all_items_amount}件目の商品";
+  }
+  // 最終ページの場合
+  if($all_items_amount < $list_end_number){
+    return "{$all_items_amount}件中 {$list_start_number} - {$all_items_amount}件目の商品";
+  }
+  // 通常のページ  
+  return "{$all_items_amount}件中 {$list_start_number} - {$list_end_number}件目の商品";
+}
+
+function calculate_total_pages_number($all_items_amount){
+  return ceil($all_items_amount / DISPLAY_ITEMS_NUMBER);
 }
